@@ -1,103 +1,95 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-
 model MsUser {
-  UserId                Int               @id @default(autoincrement()) @map("UserId")
-  Username              String?           @db.VarChar(255)
-  Password              String?           @db.VarChar(255)
-  RoleId                Int               @map("RoleId")
-  Avatar                String?           @db.VarChar(255)
-  Stsrc                 String            @db.VarChar(1) @map("Stsrc")
-  CreatedAt             DateTime?         @map("CreatedAt")
-  CreatedBy             String?           @db.VarChar(255)
-  UpdatedAt             DateTime?         @map("UpdatedAt")
-  UpdatedBy             String?           @db.VarChar(255)
-
-  Role                  TrRole            @relation(fields: [RoleId], references: [RoleId])
-  Orders                TrOrder[]
+  UserId    Int       @id @default(autoincrement()) @map("UserId")
+  Username  String?   @db.VarChar(255)
+  Password  String?   @db.VarChar(255)
+  RoleId    Int       @map("RoleId")
+  Avatar    String?   @db.VarChar(255)
+  Stsrc     String    @map("Stsrc") @db.VarChar(1)
+  CreatedAt DateTime? @map("CreatedAt")
+  CreatedBy String?   @db.VarChar(255)
+  UpdatedAt DateTime? @map("UpdatedAt")
+  UpdatedBy String?   @db.VarChar(255)
+  Role      TrRole    @relation(fields: [RoleId], references: [RoleId])
+  Orders    TrOrder[]
 
   @@map("MsUser")
 }
 
 model TrRole {
-  RoleId                Int               @id @default(autoincrement()) @map("RoleId")
-  RoleName              String            @db.VarChar(255)
-  Stsrc                 String            @db.VarChar(1) @map("Stsrc")
-  CreatedAt             DateTime?         @map("CreatedAt")
-  CreatedBy             String?           @db.VarChar(255)
-  UpdatedAt             DateTime?         @map("UpdatedAt")
-  UpdatedBy             String?           @db.VarChar(255)
-
-  Users                 MsUser[]
+  RoleId    Int       @id @default(autoincrement()) @map("RoleId")
+  RoleName  String    @db.VarChar(255)
+  Stsrc     String    @map("Stsrc") @db.VarChar(1)
+  CreatedAt DateTime? @map("CreatedAt")
+  CreatedBy String?   @db.VarChar(255)
+  UpdatedAt DateTime? @map("UpdatedAt")
+  UpdatedBy String?   @db.VarChar(255)
+  Users     MsUser[]
 
   @@map("TrRole")
 }
 
-
 model TrOrder {
-  OrderId               Int               @id @default(autoincrement()) @map("OrderId")
-  UserId                Int               @map("UserId")
-  TotalPrice            Decimal           @db.Decimal(10, 2) @map("TotalPrice")
-  Stsrc                 String            @db.VarChar(1) @map("Stsrc")
-  CreatedAt             DateTime?         @map("CreatedAt")
-  CreatedBy             String?           @db.VarChar(255)
-  UpdatedAt             DateTime?         @map("UpdatedAt")
-  UpdatedBy             String?           @db.VarChar(255)
-
-  User                  MsUser            @relation(fields: [UserId], references: [UserId])
-  OrderDetail           TrOrderDetail[]
+  OrderId     Int             @id @default(autoincrement()) @map("OrderId")
+  UserId      Int             @map("UserId")
+  TotalPrice  Decimal         @map("TotalPrice") @db.Decimal(10, 2)
+  Stsrc       String          @map("Stsrc") @db.VarChar(1)
+  CreatedAt   DateTime?       @map("CreatedAt")
+  CreatedBy   String?         @db.VarChar(255)
+  UpdatedAt   DateTime?       @map("UpdatedAt")
+  UpdatedBy   String?         @db.VarChar(255)
+  User        MsUser          @relation(fields: [UserId], references: [UserId])
+  OrderDetail TrOrderDetail[]
 
   @@map("TrOrder")
 }
 
 model TrOrderDetail {
-  OrderDetailId        Int                @id @default(autoincrement()) @map("OrderDetailId")
-  OrderId              Int                @map("OrderId")
-  WeaponId             Int                @map("WeaponId")
-  Quantity             Int                @map("Quantity")
-  DiscountAmount       Decimal            @db.Decimal(10, 2) @map("DiscountAmount")
-  UnitPrice            Decimal            @db.Decimal(10, 2) @map("UnitPrice")
-  TotalPrice           Decimal            @db.Decimal(10, 2) @map("TotalPrice")
-  Stsrc                String            @db.VarChar(1) @map("Stsrc")
-  CreatedAt            DateTime?         @map("CreatedAt")
-  CreatedBy            String?           @db.VarChar(255)
-  UpdatedAt            DateTime?         @map("UpdatedAt")
-  UpdatedBy            String?           @db.VarChar(255)
-
-  Weapons              MsWeapon           @relation(fields: [WeaponId], references: [WeaponId])
-  Orders               TrOrder            @relation(fields: [OrderId], references: [OrderId])
+  OrderDetailId  Int       @id @default(autoincrement()) @map("OrderDetailId")
+  OrderId        Int       @map("OrderId")
+  WeaponId       Int       @map("WeaponId")
+  Quantity       Int       @map("Quantity")
+  DiscountAmount Decimal   @map("DiscountAmount") @db.Decimal(10, 2)
+  UnitPrice      Decimal   @map("UnitPrice") @db.Decimal(10, 2)
+  TotalPrice     Decimal   @map("TotalPrice") @db.Decimal(10, 2)
+  Stsrc          String    @map("Stsrc") @db.VarChar(1)
+  CreatedAt      DateTime? @map("CreatedAt")
+  CreatedBy      String?   @db.VarChar(255)
+  UpdatedAt      DateTime? @map("UpdatedAt")
+  UpdatedBy      String?   @db.VarChar(255)
+  Orders         TrOrder   @relation(fields: [OrderId], references: [OrderId])
+  Weapons        MsWeapon  @relation(fields: [WeaponId], references: [WeaponId])
 
   @@map("TrOrderDetail")
 }
 
-
 model MsWeapon {
-  WeaponId            Int                 @id @default(autoincrement()) @map("WeaponId")
-  Title               String              @db.VarChar(255)
-  Type                String              @db.VarChar(255)
-  Rarity              Int                 @map("Rarity")
-  BaseAtk             Decimal             @db.Decimal(10, 2) @map("BaseAtk")
-  SubStat             String              @db.VarChar(255)
-  PassiveName         String              @db.VarChar(255)
-  PassiveDesc         String              @db.VarChar(255)
-  Location            String              @db.VarChar(255)
-  AscensioMaterial    String              @db.VarChar(255)
-  Price               Decimal             @db.Decimal(10, 2) @map("Price")
-  DiscountAmount      Decimal             @db.Decimal(10, 2) @map("DiscountAmount")
-  Stsrc               String            @db.VarChar(1) @map("Stsrc")
-  CreatedAt           DateTime?         @map("CreatedAt")
-  CreatedBy           String?           @db.VarChar(255)
-  UpdatedAt           DateTime?         @map("UpdatedAt")
-  UpdatedBy           String?           @db.VarChar(255)
-
-  OrderDetail         TrOrderDetail[]
+  WeaponId         Int             @id @default(autoincrement()) @map("WeaponId")
+  Title            String          @db.VarChar(255)
+  Type             String          @db.VarChar(255)
+  Rarity           Int             @map("Rarity")
+  BaseAtk          Decimal         @map("BaseAtk") @db.Decimal(10, 2)
+  SubStat          String          @db.VarChar(255)
+  PassiveName      String          @db.VarChar(255)
+  PassiveDesc      String          @db.VarChar(255)
+  Location         String          @db.VarChar(255)
+  AscensioMaterial String          @db.VarChar(255)
+  Price            Decimal         @map("Price") @db.Decimal(10, 2)
+  DiscountAmount   Decimal         @map("DiscountAmount") @db.Decimal(10, 2)
+  Stsrc            String          @map("Stsrc") @db.VarChar(1)
+  CreatedAt        DateTime?       @map("CreatedAt")
+  CreatedBy        String?         @db.VarChar(255)
+  UpdatedAt        DateTime?       @map("UpdatedAt")
+  UpdatedBy        String?         @db.VarChar(255)
+  OrderDetail      TrOrderDetail[]
 
   @@map("MsWeapon")
 }
