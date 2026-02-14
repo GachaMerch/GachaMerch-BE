@@ -16,8 +16,11 @@
     "moduleResolution": "node",
     "types": ["node"],
     "typeRoots": ["./node_modules/@types", "./src/types"],
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "include": ["src/**/*", "prisma/**/*"],
+  "include": ["src/**/*", "prisma/**/*", "prisma/seed.ts"],
   "exclude": ["node_modules", "dist"]
 }

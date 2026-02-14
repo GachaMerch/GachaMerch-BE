@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model MsUser {
@@ -75,11 +74,12 @@ model MsWeapon {
   WeaponId         Int             @id @default(autoincrement()) @map("WeaponId")
   Title            String          @db.VarChar(255)
   Type             String          @db.VarChar(255)
+  Image            String          @db.VarChar(255)
   Rarity           Int             @map("Rarity")
   BaseAtk          Decimal         @map("BaseAtk") @db.Decimal(10, 2)
   SubStat          String          @db.VarChar(255)
   PassiveName      String          @db.VarChar(255)
-  PassiveDesc      String          @db.VarChar(255)
+  PassiveDesc      String          @db.Text
   Location         String          @db.VarChar(255)
   AscensioMaterial String          @db.VarChar(255)
   Price            Decimal         @map("Price") @db.Decimal(10, 2)
