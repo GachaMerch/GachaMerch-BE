@@ -2,3 +2,4 @@
 
 # Node Module
 node_modules/
+/generated/prisma
