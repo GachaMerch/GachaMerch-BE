@@ -6,7 +6,7 @@ import weaponRoute from "@/routes/weapon.route";
 const app = express();
 
 app.use(express.json());
-app.use("/assets", express.static(path.join(__dirname, "../../assets")));
+app.use("/assets", express.static(path.join(process.cwd(), "assets")));
 const PORT = process.env.PORT || 3000;
 
 // Swagger docs (development only)
