@@ -38,10 +38,13 @@ async function main() {
     const weaponData: WeaponData = JSON.parse(jsonData);
 
     const imageFolderPath = path.join(__dirname, "../assets/image", folderName);
-    const iconPath = path.join(imageFolderPath, "icon");
-    const imagePath = fs.existsSync(iconPath)
-      ? `/assets/image/${folderName}/icon`
-      : "";
+    const iconPng = path.join(imageFolderPath, "icon.png");
+    const iconWebp = path.join(imageFolderPath, "icon.webp");
+    const imagePath = fs.existsSync(iconPng)
+      ? `/assets/image/${folderName}/icon.png`
+      : fs.existsSync(iconWebp)
+        ? `/assets/image/${folderName}/icon.webp`
+        : "";
 
     try {
       await prisma.msWeapon.create({
