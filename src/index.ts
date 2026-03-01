@@ -2,6 +2,7 @@ import "dotenv/config";
 import express, { Request, Response } from "express";
 import path from "path";
 import weaponRoute from "@/routes/weapon.route";
+import authRoute from "@/routes/auth.route";
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.get("/", (_req: Request, res: Response) => {
 });
 
 app.use("/api/weapons", weaponRoute);
+app.use("/api/auth", authRoute);
 
 const startServer = async (): Promise<void> => {
   try {

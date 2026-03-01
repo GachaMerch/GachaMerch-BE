@@ -9,6 +9,8 @@ datasource db {
 model MsUser {
   UserId    Int       @id @default(autoincrement()) @map("UserId")
   Username  String?   @db.VarChar(255)
+  Email     String?   @unique @db.VarChar(255)
+  GoogleId  String?   @unique @db.VarChar(255)
   Password  String?   @db.VarChar(255)
   RoleId    Int       @map("RoleId")
   Avatar    String?   @db.VarChar(255)

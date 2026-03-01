@@ -16,6 +16,11 @@ interface WeaponData {
 }
 
 async function main() {
+  // Seed roles
+  await prisma.trRole.upsert({ where: { RoleId: 1 }, update: {}, create: { RoleId: 1, RoleName: "admin", Stsrc: "A", CreatedAt: new Date(), CreatedBy: "system" } });
+  await prisma.trRole.upsert({ where: { RoleId: 2 }, update: {}, create: { RoleId: 2, RoleName: "user", Stsrc: "A", CreatedAt: new Date(), CreatedBy: "system" } });
+  console.log("✅ Roles seeded");
+
   const assetsPath = path.join(__dirname, "../assets/data");
 
   const weaponFolders = fs.readdirSync(assetsPath).filter((item) => {
