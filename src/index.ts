@@ -1,10 +1,12 @@
 import "dotenv/config";
 import express, { Request, Response } from "express";
+import path from "path";
 import weaponRoute from "@/routes/weapon.route";
 
 const app = express();
 
 app.use(express.json());
+app.use("/assets", express.static(path.join(__dirname, "../../assets")));
 const PORT = process.env.PORT || 3000;
 
 // Swagger docs (development only)

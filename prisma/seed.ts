@@ -37,15 +37,11 @@ async function main() {
     const jsonData = fs.readFileSync(jsonPath, "utf-8");
     const weaponData: WeaponData = JSON.parse(jsonData);
 
-    const imageFiles = fs.readdirSync(folderPath).filter((file) => {
-      const ext = path.extname(file).toLowerCase();
-      return [".png", ".jpg", ".jpeg", ".webp"].includes(ext);
-    });
-
-    const imagePath =
-      imageFiles.length > 0
-        ? `/assets/data/${folderName}/${imageFiles[0]}`
-        : "";
+    const imageFolderPath = path.join(__dirname, "../assets/image", folderName);
+    const iconPath = path.join(imageFolderPath, "icon");
+    const imagePath = fs.existsSync(iconPath)
+      ? `/assets/image/${folderName}/icon`
+      : "";
 
     try {
       await prisma.msWeapon.create({
