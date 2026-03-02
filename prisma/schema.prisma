@@ -15,6 +15,7 @@ model MsUser {
   RoleId    Int       @map("RoleId")
   Avatar    String?   @db.VarChar(255)
   Stsrc     String    @map("Stsrc") @db.VarChar(1)
+  Coin      Int 
   CreatedAt DateTime? @map("CreatedAt")
   CreatedBy String?   @db.VarChar(255)
   UpdatedAt DateTime? @map("UpdatedAt")

@@ -5,7 +5,7 @@ const router = Router();
 
 /**
  * @swagger
- * /api/auth/google:
+ *  /api/auth/google:
  *   post:
  *     summary: Login or register with Google OAuth
  *     tags: [Auth]
