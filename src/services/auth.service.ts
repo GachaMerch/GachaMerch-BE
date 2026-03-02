@@ -32,7 +32,7 @@ export const registerWithPassword = async (
       Coin: 1000,
       Stsrc: "A",
       CreatedAt: new Date(),
-      CreatedBy: "system",
+      CreatedBy: email,
     },
   });
 
@@ -111,13 +111,13 @@ export const loginWithGoogle = async (idToken: string): Promise<AuthResult> => {
         Coin: 1000,
         Stsrc: "A",
         CreatedAt: new Date(),
-        CreatedBy: "system",
+        CreatedBy: email,
       },
     });
   } else if (!user.GoogleId) {
     user = await prisma.msUser.update({
       where: { UserId: user.UserId },
-      data: { GoogleId: googleId, UpdatedAt: new Date(), UpdatedBy: "system" },
+      data: { GoogleId: googleId, UpdatedAt: new Date(), UpdatedBy: email },
     });
   }
 
@@ -161,12 +161,13 @@ export const getMe = async (userId: number) => {
 
 export const updateProfile = async (
   userId: number,
+  email: string,
   input: UpdateProfileInput
 ) => {
   const data: Record<string, unknown> = {
     Username: input.username,
     UpdatedAt: new Date(),
-    UpdatedBy: String(userId),
+    UpdatedBy: email,
   };
 
   if (input.password) {

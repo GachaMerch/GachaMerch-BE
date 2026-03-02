@@ -1,39 +1,38 @@
 import { Router } from "express";
 import { createBookingHandler } from "@/controllers/order.controller";
-;
+import { authenticate } from "@/middlewares/auth.middleware";
+
 const router = Router();
 
 /**
  * @swagger
- *  /api/order/buy:
+ * /api/order/buy:
  *   post:
  *     summary: Purchase a weapon using in-game coins
  *     tags: [Order]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required: [googleId , weaponId]
+ *             required: [weaponId]
  *             properties:
- *               googleId:
- *                 type: string
- *                 description: Google ID of the user purchasing the weapon
  *               weaponId:
  *                 type: integer
- *                 description: ID of the weapon to purchase
+ *               quantity:
+ *                 type: integer
+ *                 default: 1
  *     responses:
  *       201:
  *         description: Weapon purchased successfully
  *       400:
- *         description: Insufficient coins or invalid weapon
+ *         description: Insufficient coins or invalid input
  *       401:
- *         description: Unauthorized - Invalid or missing token
- *       404:
- *         description: User or Weapon not found
+ *         description: Unauthorized
  */
-
-router.post("/buy" , createBookingHandler);
+router.post("/buy", authenticate, createBookingHandler);
 
 export default router;

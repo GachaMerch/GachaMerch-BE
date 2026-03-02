@@ -1,59 +1,62 @@
 import { prisma } from "@/config/prisma";
 
+export const purchaseWeapon = async (
+  userId: number,
+  weaponId: number,
+  quantity: number = 1
+) => {
+  const weapon = await prisma.msWeapon.findUnique({ where: { WeaponId: weaponId } });
+  const user = await prisma.msUser.findUnique({ where: { UserId: userId } });
 
-export const purchaseWeapon = async (googleId: string, weaponId: number) => {
-  return await prisma.$transaction(async (tx) => {
-    const weapon = await tx.msWeapon.findUnique({
-      where: { WeaponId: weaponId }
-    });
+  if (!weapon || weapon.Stsrc !== "A") throw new Error("Weapon not found or unavailable.");
+  if (!user) throw new Error("User not found.");
+  if (quantity < 1) throw new Error("Quantity must be at least 1.");
 
-    const user = await tx.msUser.findUnique({
-      where: { GoogleId: googleId }
-    });
+  const unitPrice = Number(weapon.Price) - Number(weapon.DiscountAmount || 0);
+  const totalPrice = unitPrice * quantity;
 
-    if (!weapon || weapon.Stsrc !== 'A') throw new Error("Weapon not found or unavailable.");
-    if (!user) throw new Error("User not found.");
+  if (user.Coin < totalPrice) {
+    throw new Error(
+      `Insufficient coins. Need ${totalPrice} but only have ${user.Coin}.`
+    );
+  }
 
-    const price = Number(weapon.Price);
-    const discount = Number(weapon.DiscountAmount || 0);
-    const finalPrice = price - discount;
-
-    if (user.Coin < finalPrice) {
-      throw new Error(`Insufficient coins. You need ${finalPrice} but only have ${user.Coin}.`);
-    }
-
-    await tx.msUser.update({
-      where: { GoogleId: googleId },
-      data: { Coin: { decrement: Math.floor(finalPrice) } }
-    });
-
-    const now = new Date();
-    const createdBy = user.Username || user.GoogleId || googleId;
-    const order = await tx.trOrder.create({
-      data: {
-        UserId: user.UserId,
-        TotalPrice: finalPrice,
-        Stsrc: 'A',
-        CreatedAt: now,
-        CreatedBy: createdBy,
-        OrderDetail: {
-          create: {
-            WeaponId: weaponId,
-            Quantity: 1,
-            UnitPrice: price,
-            DiscountAmount: discount,
-            TotalPrice: finalPrice,
-            Stsrc: 'A',
-            CreatedAt: now,
-            CreatedBy: createdBy
-          }
-        }
-      },
-      include: {
-        OrderDetail: true
-      }
-    });
-
-    return { order, remainingCoins: user.Coin - Math.floor(finalPrice) };
+  const updatedUser = await prisma.msUser.update({
+    where: { UserId: userId },
+    data: { Coin: { decrement: Math.floor(totalPrice) } },
   });
+
+  const now = new Date();
+  const createdBy = user.Username || String(userId);
+
+  const order = await prisma.trOrder.create({
+    data: {
+      UserId: user.UserId,
+      TotalPrice: totalPrice,
+      Stsrc: "A",
+      CreatedAt: now,
+      CreatedBy: createdBy,
+      OrderDetail: {
+        create: {
+          WeaponId: weaponId,
+          Quantity: quantity,
+          UnitPrice: Number(weapon.Price),
+          DiscountAmount: Number(weapon.DiscountAmount || 0),
+          TotalPrice: totalPrice,
+          Stsrc: "A",
+          CreatedAt: now,
+          CreatedBy: createdBy,
+        },
+      },
+    },
+    include: { OrderDetail: true },
+  });
+
+  return {
+    orderId: order.OrderId,
+    weaponTitle: weapon.Title,
+    quantity,
+    totalPrice,
+    remainingCoins: updatedUser.Coin,
+  };
 };

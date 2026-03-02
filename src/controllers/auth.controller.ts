@@ -91,7 +91,8 @@ export const updateProfileHandler = async (req: AuthRequest, res: Response): Pro
       return;
     }
 
-    const updated = await updateProfile(userId, {
+    const email = req.user!.email ?? "";
+    const updated = await updateProfile(userId, email, {
       username: username.trim(),
       password,
     });

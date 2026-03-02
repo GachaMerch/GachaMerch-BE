@@ -1,23 +1,30 @@
-import { Request, Response } from "express";
-import * as orderService from "../services/order.service";
+import { Response } from "express";
+import * as orderService from "@/services/order.service";
+import { AuthRequest } from "@/middlewares/auth.middleware";
+import { successResponse, errorResponse } from "@/utils/response";
 
-export const createBookingHandler = async (req: Request, res: Response) => {
-    try {
-        const { googleId , weaponId } = req.body;
+export const createBookingHandler = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = req.user!.userId;
+    const { weaponId, quantity = 1 } = req.body;
 
-        if (!googleId || !weaponId) {
-            return res.status(400).json({ message: "User ID and Weapon ID are required." });
-        }
+    if (!weaponId) {
+      errorResponse(res, "weaponId is required", 400);
+      return;
+    }
 
-    const result = await orderService.purchaseWeapon(googleId, weaponId);
+    const qty = Number(quantity);
+    if (isNaN(qty) || qty < 1) {
+      errorResponse(res, "quantity must be a positive integer", 400);
+      return;
+    }
 
-    res.status(201).json({
-    success: true,
-    message: "Weapon purchased successfully!",
-    data: result
-    });
-    } catch (error: any) {
-    // Return the specific error (e.g., "Insufficient coins") to Flutter
-    res.status(400).json({ success: false, message: error.message });
+    const result = await orderService.purchaseWeapon(userId, Number(weaponId), qty);
+    successResponse(res, result, "Weapon purchased successfully!", 201);
+  } catch (error: any) {
+    errorResponse(res, error.message ?? "Purchase failed", 400);
   }
 };
