@@ -11,7 +11,7 @@ export const createBookingHandler = async (req: Request, res: Response) => {
 
     const result = await orderService.purchaseWeapon(googleId, weaponId);
 
-    res.status(200).json({
+    res.status(201).json({
     success: true,
     message: "Weapon purchased successfully!",
     data: result

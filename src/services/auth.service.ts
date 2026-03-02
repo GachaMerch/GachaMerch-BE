@@ -2,7 +2,7 @@ import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { prisma } from "@/config/prisma";
-import { AuthResult } from "@/types/auth.types";
+import { AuthResult, UpdateProfileInput } from "@/types/auth.types";
 
 const hashPassword = (password: string): string =>
   crypto.createHash("sha256").update(password).digest("hex");
@@ -29,7 +29,7 @@ export const registerWithPassword = async (
       Email: email,
       Password: hashPassword(password),
       RoleId: 2,
-      Coin : 1000,
+      Coin: 1000,
       Stsrc: "A",
       CreatedAt: new Date(),
       CreatedBy: "system",
@@ -38,7 +38,14 @@ export const registerWithPassword = async (
 
   return {
     token: makeToken(user.UserId, user.Email, user.RoleId),
-    user: { userId: user.UserId, username: user.Username, email: user.Email, avatar: user.Avatar, roleId: user.RoleId },
+    user: {
+      userId: user.UserId,
+      username: user.Username,
+      email: user.Email,
+      avatar: user.Avatar,
+      roleId: user.RoleId,
+      coin: user.Coin,
+    },
   };
 };
 
@@ -61,7 +68,14 @@ export const loginWithPassword = async (
 
   return {
     token: makeToken(user.UserId, user.Email, user.RoleId),
-    user: { userId: user.UserId, username: user.Username, email: user.Email, avatar: user.Avatar, roleId: user.RoleId },
+    user: {
+      userId: user.UserId,
+      username: user.Username,
+      email: user.Email,
+      avatar: user.Avatar,
+      roleId: user.RoleId,
+      coin: user.Coin,
+    },
   };
 };
 
@@ -87,7 +101,6 @@ export const loginWithGoogle = async (idToken: string): Promise<AuthResult> => {
   });
 
   if (!user) {
-    // User baru → buat akun baru dengan role 2 (user biasa)
     user = await prisma.msUser.create({
       data: {
         Username: name ?? email,
@@ -95,14 +108,13 @@ export const loginWithGoogle = async (idToken: string): Promise<AuthResult> => {
         GoogleId: googleId,
         Avatar: picture ?? null,
         RoleId: 2,
-        Coin : 1000,
+        Coin: 1000,
         Stsrc: "A",
         CreatedAt: new Date(),
         CreatedBy: "system",
       },
     });
   } else if (!user.GoogleId) {
-    // User sudah ada tapi belum link Google → update GoogleId
     user = await prisma.msUser.update({
       where: { UserId: user.UserId },
       data: { GoogleId: googleId, UpdatedAt: new Date(), UpdatedBy: "system" },
@@ -111,6 +123,75 @@ export const loginWithGoogle = async (idToken: string): Promise<AuthResult> => {
 
   return {
     token: makeToken(user.UserId, user.Email, user.RoleId),
-    user: { userId: user.UserId, username: user.Username, email: user.Email, avatar: user.Avatar, roleId: user.RoleId },
+    user: {
+      userId: user.UserId,
+      username: user.Username,
+      email: user.Email,
+      avatar: user.Avatar,
+      roleId: user.RoleId,
+      coin: user.Coin,
+    },
+  };
+};
+
+export const getMe = async (userId: number) => {
+  const user = await prisma.msUser.findUnique({
+    where: { UserId: userId },
+    select: {
+      UserId: true,
+      Username: true,
+      Email: true,
+      Avatar: true,
+      RoleId: true,
+      Coin: true,
+    },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  return {
+    userId: user.UserId,
+    username: user.Username,
+    email: user.Email,
+    avatar: user.Avatar,
+    roleId: user.RoleId,
+    coin: user.Coin,
+  };
+};
+
+export const updateProfile = async (
+  userId: number,
+  input: UpdateProfileInput
+) => {
+  const data: Record<string, unknown> = {
+    Username: input.username,
+    UpdatedAt: new Date(),
+    UpdatedBy: String(userId),
+  };
+
+  if (input.password) {
+    data.Password = hashPassword(input.password);
+  }
+
+  const user = await prisma.msUser.update({
+    where: { UserId: userId },
+    data,
+    select: {
+      UserId: true,
+      Username: true,
+      Email: true,
+      Avatar: true,
+      RoleId: true,
+      Coin: true,
+    },
+  });
+
+  return {
+    userId: user.UserId,
+    username: user.Username,
+    email: user.Email,
+    avatar: user.Avatar,
+    roleId: user.RoleId,
+    coin: user.Coin,
   };
 };

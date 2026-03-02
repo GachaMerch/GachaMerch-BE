@@ -14,8 +14,8 @@ model MsUser {
   Password  String?   @db.VarChar(255)
   RoleId    Int       @map("RoleId")
   Avatar    String?   @db.VarChar(255)
-  Stsrc     String    @map("Stsrc") @db.VarChar(1)
   Coin      Int 
+  Stsrc     String    @map("Stsrc") @db.VarChar(1)
   CreatedAt DateTime? @map("CreatedAt")
   CreatedBy String?   @db.VarChar(255)
   UpdatedAt DateTime? @map("UpdatedAt")

@@ -1,6 +1,13 @@
 import { Request, Response } from "express";
-import { loginWithGoogle, registerWithPassword, loginWithPassword } from "@/services/auth.service";
+import {
+  loginWithGoogle,
+  registerWithPassword,
+  loginWithPassword,
+  getMe,
+  updateProfile,
+} from "@/services/auth.service";
 import { successResponse, errorResponse } from "@/utils/response";
+import { AuthRequest } from "@/middlewares/auth.middleware";
 
 export const googleAuthHandler = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -52,5 +59,45 @@ export const loginHandler = async (req: Request, res: Response): Promise<void> =
       console.error("Login error:", error);
       errorResponse(res, "Login failed", 500);
     }
+  }
+};
+
+export const getMeHandler = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const userId = req.user!.userId;
+    const user = await getMe(userId);
+    successResponse(res, user, "User fetched successfully", 200);
+  } catch (error: any) {
+    if (error.message === "User not found") {
+      errorResponse(res, "User not found", 404);
+    } else {
+      console.error("Get me error:", error);
+      errorResponse(res, "Failed to fetch user", 500);
+    }
+  }
+};
+
+export const updateProfileHandler = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const userId = req.user!.userId;
+    const { username, password } = req.body;
+
+    if (!username || typeof username !== "string" || username.trim() === "") {
+      errorResponse(res, "username is required", 400);
+      return;
+    }
+    if (password !== undefined && password.length < 8) {
+      errorResponse(res, "Password must be at least 8 characters", 400);
+      return;
+    }
+
+    const updated = await updateProfile(userId, {
+      username: username.trim(),
+      password,
+    });
+    successResponse(res, updated, "Profile updated successfully", 200);
+  } catch (error: any) {
+    console.error("Update profile error:", error);
+    errorResponse(res, "Failed to update profile", 500);
   }
 };

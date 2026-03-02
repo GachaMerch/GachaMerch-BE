@@ -10,5 +10,11 @@ export interface AuthResult {
     email: string | null;
     avatar: string | null;
     roleId: number;
+    coin: number;
   };
+}
+
+export interface UpdateProfileInput {
+  username: string;
+  password?: string;
 }
