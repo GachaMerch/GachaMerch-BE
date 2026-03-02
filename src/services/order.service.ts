@@ -27,7 +27,7 @@ export const purchaseWeapon = async (
   });
 
   const now = new Date();
-  const createdBy = user.Username || String(userId);
+  const createdBy = user.Email || String(userId);
 
   const order = await prisma.trOrder.create({
     data: {
@@ -50,6 +50,23 @@ export const purchaseWeapon = async (
       },
     },
     include: { OrderDetail: true },
+  });
+
+  await prisma.trInventory.upsert({
+    where: { UserId_WeaponId: { UserId: userId, WeaponId: weaponId } },
+    update: {
+      Quantity: { increment: quantity },
+      UpdatedAt: now,
+      UpdatedBy: createdBy,
+    },
+    create: {
+      UserId: userId,
+      WeaponId: weaponId,
+      Quantity: quantity,
+      Stsrc: "A",
+      CreatedAt: now,
+      CreatedBy: createdBy,
+    },
   });
 
   return {

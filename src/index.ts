@@ -4,6 +4,7 @@ import path from "path";
 import weaponRoute from "@/routes/weapon.route";
 import authRoute from "@/routes/auth.route";
 import orderRoute from "@/routes/order.route";
+import inventoryRoute from "@/routes/inventory.route";
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.get("/", (_req: Request, res: Response) => {
 app.use("/api/weapons", weaponRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/order", orderRoute);
+app.use("/api/inventory", inventoryRoute);
 
 const startServer = async (): Promise<void> => {
   try {

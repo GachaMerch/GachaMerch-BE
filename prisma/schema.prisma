@@ -20,8 +20,9 @@ model MsUser {
   CreatedBy String?   @db.VarChar(255)
   UpdatedAt DateTime? @map("UpdatedAt")
   UpdatedBy String?   @db.VarChar(255)
-  Role      TrRole    @relation(fields: [RoleId], references: [RoleId])
+  Role      TrRole      @relation(fields: [RoleId], references: [RoleId])
   Orders    TrOrder[]
+  Inventory TrInventory[]
 
   @@map("MsUser")
 }
@@ -93,6 +94,24 @@ model MsWeapon {
   UpdatedAt        DateTime?       @map("UpdatedAt")
   UpdatedBy        String?         @db.VarChar(255)
   OrderDetail      TrOrderDetail[]
+  Inventory        TrInventory[]
 
   @@map("MsWeapon")
+}
+
+model TrInventory {
+  InventoryId Int       @id @default(autoincrement()) @map("InventoryId")
+  UserId      Int       @map("UserId")
+  WeaponId    Int       @map("WeaponId")
+  Quantity    Int       @map("Quantity")
+  Stsrc       String    @map("Stsrc") @db.VarChar(1)
+  CreatedAt   DateTime? @map("CreatedAt")
+  CreatedBy   String?   @db.VarChar(255)
+  UpdatedAt   DateTime? @map("UpdatedAt")
+  UpdatedBy   String?   @db.VarChar(255)
+  User        MsUser    @relation(fields: [UserId], references: [UserId])
+  Weapon      MsWeapon  @relation(fields: [WeaponId], references: [WeaponId])
+
+  @@unique([UserId, WeaponId])
+  @@map("TrInventory")
 }
