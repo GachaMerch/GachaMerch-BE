@@ -1,5 +1,5 @@
 import { prisma } from "@/config/prisma";
-import { GetWeaponsParams, GetWeaponsResult } from "@/types/weapon.types";
+import { GetWeaponsParams, GetWeaponsResult, CreateWeaponParams } from "@/types/weapon.types";
 
 export const getWeapons = async ({
   page,
@@ -34,4 +34,24 @@ export const getWeapons = async ({
     limit,
     totalPages,
   };
+};
+
+export const createWeapon = async (params: CreateWeaponParams) => {
+  return prisma.msWeapon.create({
+    data: {
+      Title: params.title,
+      Type: params.type,
+      Image: params.imagePath,
+      Rarity: params.rarity,
+      BaseAtk: params.baseAtk,
+      SubStat: params.subStat ?? "",
+      PassiveName: params.passiveName ?? "",
+      PassiveDesc: params.description ?? "",
+      Location: "",
+      AscensioMaterial: "",
+      Price: params.price,
+      DiscountAmount: 0,
+      Stsrc: "A",
+    },
+  });
 };

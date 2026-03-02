@@ -1,7 +1,10 @@
 import { Router } from "express";
-import { getWeaponsHandler } from "@/controllers/weapon.controller";
+import multer from "multer";
+import { getWeaponsHandler, createWeaponHandler } from "@/controllers/weapon.controller";
 import { validate } from "@/middlewares/validate";
 import { getWeaponsSchema } from "@/middlewares/validations/weapon.validation";
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 const router = Router();
 
@@ -61,5 +64,6 @@ const router = Router();
  *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get("/", validate(getWeaponsSchema), getWeaponsHandler);
+router.post("/", upload.single("image"), createWeaponHandler);
 
 export default router;

@@ -12,3 +12,15 @@ export interface GetWeaponsResult {
   limit: number;
   totalPages: number;
 }
+
+export interface CreateWeaponParams {
+  title: string;
+  type: string;
+  imagePath: string;
+  rarity: number;
+  baseAtk: number;
+  price: number;
+  subStat?: string;
+  passiveName?: string;
+  description?: string;
+}

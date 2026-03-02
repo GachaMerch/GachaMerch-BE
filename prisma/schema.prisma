@@ -115,3 +115,18 @@ model TrInventory {
   @@unique([UserId, WeaponId])
   @@map("TrInventory")
 }
+
+model MsNotification {
+  NotifId     Int       @id @default(autoincrement()) @map("NotifId")
+  Title       String    @db.VarChar(255)
+  Content     String    @db.Text
+  Type        String    @db.VarChar(50)
+  PublishedAt DateTime  @map("PublishedAt")
+  Stsrc       String    @map("Stsrc") @db.VarChar(1)
+  CreatedAt   DateTime? @map("CreatedAt")
+  CreatedBy   String?   @db.VarChar(255)
+  UpdatedAt   DateTime? @map("UpdatedAt")
+  UpdatedBy   String?   @db.VarChar(255)
+
+  @@map("MsNotification")
+}
