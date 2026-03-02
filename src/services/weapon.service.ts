@@ -1,5 +1,5 @@
 import { prisma } from "@/config/prisma";
-import { GetWeaponsParams, GetWeaponsResult, CreateWeaponParams } from "@/types/weapon.types";
+import { GetWeaponsParams, GetWeaponsResult, CreateWeaponParams, UpdateWeaponParams } from "@/types/weapon.types";
 
 export const getWeapons = async ({
   page,
@@ -36,6 +36,31 @@ export const getWeapons = async ({
   };
 };
 
+export const updateWeapon = async (id: number, params: UpdateWeaponParams) => {
+  return prisma.msWeapon.update({
+    where: { WeaponId: id },
+    data: {
+      ...(params.title       !== undefined && { Title:          params.title }),
+      ...(params.type        !== undefined && { Type:           params.type }),
+      ...(params.imagePath   !== undefined && { Image:          params.imagePath }),
+      ...(params.rarity      !== undefined && { Rarity:         params.rarity }),
+      ...(params.baseAtk     !== undefined && { BaseAtk:        params.baseAtk }),
+      ...(params.price       !== undefined && { Price:          params.price }),
+      ...(params.discount    !== undefined && { DiscountAmount: params.discount }),
+      ...(params.subStat     !== undefined && { SubStat:        params.subStat }),
+      ...(params.passiveName !== undefined && { PassiveName:    params.passiveName }),
+      ...(params.description !== undefined && { PassiveDesc:    params.description }),
+    },
+  });
+};
+
+export const deleteWeapon = async (id: number) => {
+  return prisma.msWeapon.update({
+    where: { WeaponId: id },
+    data: { Stsrc: "N" },
+  });
+};
+
 export const createWeapon = async (params: CreateWeaponParams) => {
   return prisma.msWeapon.create({
     data: {
@@ -50,7 +75,7 @@ export const createWeapon = async (params: CreateWeaponParams) => {
       Location: "",
       AscensioMaterial: "",
       Price: params.price,
-      DiscountAmount: 0,
+      DiscountAmount: params.discount ?? 0,
       Stsrc: "A",
     },
   });

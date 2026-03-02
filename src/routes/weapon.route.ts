@@ -1,6 +1,6 @@
 import { Router } from "express";
 import multer from "multer";
-import { getWeaponsHandler, createWeaponHandler } from "@/controllers/weapon.controller";
+import { getWeaponsHandler, createWeaponHandler, updateWeaponHandler, deleteWeaponHandler } from "@/controllers/weapon.controller";
 import { validate } from "@/middlewares/validate";
 import { getWeaponsSchema } from "@/middlewares/validations/weapon.validation";
 
@@ -65,5 +65,7 @@ const router = Router();
  */
 router.get("/", validate(getWeaponsSchema), getWeaponsHandler);
 router.post("/", upload.single("image"), createWeaponHandler);
+router.put("/:id", upload.single("image"), updateWeaponHandler);
+router.delete("/:id", deleteWeaponHandler);
 
 export default router;
