@@ -73,7 +73,7 @@ export const updateWeaponHandler = async (
   res: Response
 ): Promise<void> => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
     if (isNaN(id)) {
       errorResponse(res, "Invalid weapon ID", 400);
       return;
@@ -116,7 +116,7 @@ export const deleteWeaponHandler = async (
   res: Response
 ): Promise<void> => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id as string);
     if (isNaN(id)) {
       errorResponse(res, "Invalid weapon ID", 400);
       return;
