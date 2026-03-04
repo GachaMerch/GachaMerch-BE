@@ -14,8 +14,67 @@ const options: swaggerJsdoc.Options = {
         description: "Development server",
       },
     ],
+    security: [{ bearerAuth: [] }],
     components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
       schemas: {
+        User: {
+          type: "object",
+          properties: {
+            UserId: { type: "integer", example: 1 },
+            Username: { type: "string", example: "john_doe" },
+            Email: { type: "string", example: "john@example.com" },
+            CoinBalance: { type: "number", example: 5000 },
+            Role: { type: "string", example: "user" },
+            CreatedAt: { type: "string", format: "date-time" },
+          },
+        },
+        AuthResponse: {
+          type: "object",
+          properties: {
+            token: { type: "string", example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." },
+            user: { $ref: "#/components/schemas/User" },
+          },
+        },
+        ShopItem: {
+          type: "object",
+          properties: {
+            limitedItems: {
+              type: "array",
+              items: { $ref: "#/components/schemas/Weapon" },
+            },
+            legendary: {
+              type: "array",
+              items: { $ref: "#/components/schemas/Weapon" },
+            },
+          },
+        },
+        Notification: {
+          type: "object",
+          properties: {
+            NotifId: { type: "integer", example: 1 },
+            Title: { type: "string", example: "New Weapon Available!" },
+            Content: { type: "string", example: "Aquila Favonia is now in the shop." },
+            Type: { type: "string", example: "info" },
+            PublishedAt: { type: "string", format: "date-time" },
+          },
+        },
+        InventoryItem: {
+          type: "object",
+          properties: {
+            InventoryId: { type: "integer", example: 1 },
+            UserId: { type: "integer", example: 1 },
+            WeaponId: { type: "integer", example: 5 },
+            Quantity: { type: "integer", example: 2 },
+            weapon: { $ref: "#/components/schemas/Weapon" },
+          },
+        },
         Weapon: {
           type: "object",
           properties: {

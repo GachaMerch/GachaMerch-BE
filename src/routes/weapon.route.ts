@@ -64,7 +64,181 @@ const router = Router();
  *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get("/", validate(getWeaponsSchema), getWeaponsHandler);
+
+/**
+ * @swagger
+ * /api/weapons:
+ *   post:
+ *     summary: Create a new weapon (Admin only)
+ *     tags: [Weapons]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required: [title, type, rarity, baseAtk, price]
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: Aquila Favonia
+ *               type:
+ *                 type: string
+ *                 example: Sword
+ *               rarity:
+ *                 type: integer
+ *                 example: 5
+ *               baseAtk:
+ *                 type: number
+ *                 example: 48.0
+ *               price:
+ *                 type: number
+ *                 example: 100000
+ *               discount:
+ *                 type: number
+ *                 example: 0
+ *               subStat:
+ *                 type: string
+ *                 example: Physical DMG Bonus
+ *               passiveName:
+ *                 type: string
+ *                 example: Falcon's Defiance
+ *               description:
+ *                 type: string
+ *                 example: ATK is increased by 20%...
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       201:
+ *         description: Weapon created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/SuccessResponse'
+ *                 - type: object
+ *                   properties:
+ *                     data:
+ *                       $ref: '#/components/schemas/Weapon'
+ *       400:
+ *         description: Missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.post("/", upload.single("image"), createWeaponHandler);
+
+/**
+ * @swagger
+ * /api/weapons/{id}:
+ *   put:
+ *     summary: Update an existing weapon (Admin only)
+ *     tags: [Weapons]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Weapon ID
+ *     requestBody:
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: Aquila Favonia
+ *               type:
+ *                 type: string
+ *                 example: Sword
+ *               rarity:
+ *                 type: integer
+ *                 example: 5
+ *               baseAtk:
+ *                 type: number
+ *                 example: 48.0
+ *               price:
+ *                 type: number
+ *                 example: 100000
+ *               discount:
+ *                 type: number
+ *                 example: 0
+ *               subStat:
+ *                 type: string
+ *                 example: Physical DMG Bonus
+ *               passiveName:
+ *                 type: string
+ *                 example: Falcon's Defiance
+ *               description:
+ *                 type: string
+ *                 example: ATK is increased by 20%...
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Weapon updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/SuccessResponse'
+ *                 - type: object
+ *                   properties:
+ *                     data:
+ *                       $ref: '#/components/schemas/Weapon'
+ *       400:
+ *         description: Invalid weapon ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *   delete:
+ *     summary: Delete a weapon by ID (Admin only)
+ *     tags: [Weapons]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Weapon ID
+ *     responses:
+ *       200:
+ *         description: Weapon deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
+ *       400:
+ *         description: Invalid weapon ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.put("/:id", upload.single("image"), updateWeaponHandler);
 router.delete("/:id", deleteWeaponHandler);
 
