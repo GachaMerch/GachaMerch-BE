@@ -7,10 +7,12 @@ import orderRoute from "@/routes/order.route";
 import inventoryRoute from "@/routes/inventory.route";
 import shopRoute from "@/routes/shop.route";
 import notificationRoute from "@/routes/notification.route";
+import { requestLogger } from "@/middlewares/logger.middleware";
 
 const app = express();
 
 app.use(express.json());
+app.use(requestLogger);
 app.use("/assets", express.static(path.join(process.cwd(), "assets")));
 const PORT = process.env.PORT || 3000;
 
