@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
 }
 
 model MsUser {
@@ -14,7 +14,7 @@ model MsUser {
   Password  String?   @db.VarChar(255)
   RoleId    Int       @map("RoleId")
   Avatar    String?   @db.VarChar(255)
-  Coin      Int 
+  Coin      Int
   Stsrc     String    @map("Stsrc") @db.VarChar(1)
   CreatedAt DateTime? @map("CreatedAt")
   CreatedBy String?   @db.VarChar(255)
@@ -78,6 +78,8 @@ model MsWeapon {
   WeaponId         Int             @id @default(autoincrement()) @map("WeaponId")
   Title            String          @db.VarChar(255)
   Type             String          @db.VarChar(255)
+  Description      String          @db.Text
+  Stock            Int             @map("Stock") @default(100)
   Image            String          @db.VarChar(255)
   Rarity           Int             @map("Rarity")
   BaseAtk          Decimal         @map("BaseAtk") @db.Decimal(10, 2)

@@ -9,31 +9,39 @@ export const getWeapons = async ({
 
   const [weapons, total] = await Promise.all([
     prisma.msWeapon.findMany({
-      where: {
-        Stsrc: "A",
-      },
+      where: { Stsrc: "A" },
       skip,
       take: limit,
-      orderBy: {
-        WeaponId: "desc",
-      },
+      orderBy: { WeaponId: "desc" },
     }),
-    prisma.msWeapon.count({
-      where: {
-        Stsrc: "A",
-      },
-    }),
+    prisma.msWeapon.count({ where: { Stsrc: "A" } }),
   ]);
 
-  const totalPages = Math.ceil(total / limit);
+  return { weapons, total, page, limit, totalPages: Math.ceil(total / limit) };
+};
 
-  return {
-    weapons,
-    total,
-    page,
-    limit,
-    totalPages,
-  };
+export const createWeapon = async (params: CreateWeaponParams) => {
+  return prisma.msWeapon.create({
+    data: {
+      Title: params.title,
+      Type: params.type,
+      Description: params.description ?? "",
+      Stock: params.stock ?? 100,
+      Image: params.imagePath,
+      Rarity: params.rarity,
+      BaseAtk: params.baseAtk,
+      SubStat: params.subStat ?? "",
+      PassiveName: params.passiveName ?? "",
+      PassiveDesc: params.passiveDesc ?? "",
+      Location: "",
+      AscensioMaterial: "",
+      Price: params.price,
+      DiscountAmount: params.discount ?? 0,
+      Stsrc: "A",
+      CreatedAt: new Date(),
+      CreatedBy: "admin",
+    },
+  });
 };
 
 export const updateWeapon = async (id: number, params: UpdateWeaponParams) => {
@@ -42,6 +50,8 @@ export const updateWeapon = async (id: number, params: UpdateWeaponParams) => {
     data: {
       ...(params.title       !== undefined && { Title:          params.title }),
       ...(params.type        !== undefined && { Type:           params.type }),
+      ...(params.description !== undefined && { Description:    params.description }),
+      ...(params.stock       !== undefined && { Stock:          params.stock }),
       ...(params.imagePath   !== undefined && { Image:          params.imagePath }),
       ...(params.rarity      !== undefined && { Rarity:         params.rarity }),
       ...(params.baseAtk     !== undefined && { BaseAtk:        params.baseAtk }),
@@ -49,7 +59,8 @@ export const updateWeapon = async (id: number, params: UpdateWeaponParams) => {
       ...(params.discount    !== undefined && { DiscountAmount: params.discount }),
       ...(params.subStat     !== undefined && { SubStat:        params.subStat }),
       ...(params.passiveName !== undefined && { PassiveName:    params.passiveName }),
-      ...(params.description !== undefined && { PassiveDesc:    params.description }),
+      ...(params.passiveDesc !== undefined && { PassiveDesc:    params.passiveDesc }),
+      UpdatedAt: new Date(),
     },
   });
 };
@@ -57,26 +68,6 @@ export const updateWeapon = async (id: number, params: UpdateWeaponParams) => {
 export const deleteWeapon = async (id: number) => {
   return prisma.msWeapon.update({
     where: { WeaponId: id },
-    data: { Stsrc: "N" },
-  });
-};
-
-export const createWeapon = async (params: CreateWeaponParams) => {
-  return prisma.msWeapon.create({
-    data: {
-      Title: params.title,
-      Type: params.type,
-      Image: params.imagePath,
-      Rarity: params.rarity,
-      BaseAtk: params.baseAtk,
-      SubStat: params.subStat ?? "",
-      PassiveName: params.passiveName ?? "",
-      PassiveDesc: params.description ?? "",
-      Location: "",
-      AscensioMaterial: "",
-      Price: params.price,
-      DiscountAmount: params.discount ?? 0,
-      Stsrc: "A",
-    },
+    data: { Stsrc: "N", UpdatedAt: new Date() },
   });
 };

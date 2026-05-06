@@ -76,6 +76,8 @@ async function main() {
         data: {
           Title: weaponData.name,
           Type: weaponData.type,
+          Description: weaponData.passiveDesc || "",
+          Stock: 100,
           Image: imagePath,
           Rarity: weaponData.rarity,
           BaseAtk: weaponData.baseAttack,

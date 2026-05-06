@@ -11,23 +11,28 @@ export const purchaseWeapon = async (
   if (!weapon || weapon.Stsrc !== "A") throw new Error("Weapon not found or unavailable.");
   if (!user) throw new Error("User not found.");
   if (quantity < 1) throw new Error("Quantity must be at least 1.");
+  if (weapon.Stock < quantity) throw new Error(`Insufficient stock. Only ${weapon.Stock} left.`);
 
   const unitPrice = Number(weapon.Price) - Number(weapon.DiscountAmount || 0);
   const totalPrice = unitPrice * quantity;
 
   if (user.Coin < totalPrice) {
-    throw new Error(
-      `Insufficient coins. Need ${totalPrice} but only have ${user.Coin}.`
-    );
+    throw new Error(`Insufficient coins. Need ${totalPrice} but only have ${user.Coin}.`);
   }
-
-  const updatedUser = await prisma.msUser.update({
-    where: { UserId: userId },
-    data: { Coin: { decrement: Math.floor(totalPrice) } },
-  });
 
   const now = new Date();
   const createdBy = user.Email || String(userId);
+
+  const [updatedUser] = await Promise.all([
+    prisma.msUser.update({
+      where: { UserId: userId },
+      data: { Coin: { decrement: Math.floor(totalPrice) } },
+    }),
+    prisma.msWeapon.update({
+      where: { WeaponId: weaponId },
+      data: { Stock: { decrement: quantity }, UpdatedAt: now, UpdatedBy: createdBy },
+    }),
+  ]);
 
   const order = await prisma.trOrder.create({
     data: {
@@ -54,11 +59,7 @@ export const purchaseWeapon = async (
 
   await prisma.trInventory.upsert({
     where: { UserId_WeaponId: { UserId: userId, WeaponId: weaponId } },
-    update: {
-      Quantity: { increment: quantity },
-      UpdatedAt: now,
-      UpdatedBy: createdBy,
-    },
+    update: { Quantity: { increment: quantity }, UpdatedAt: now, UpdatedBy: createdBy },
     create: {
       UserId: userId,
       WeaponId: weaponId,

@@ -16,6 +16,8 @@ export interface GetWeaponsResult {
 export interface UpdateWeaponParams {
   title?: string;
   type?: string;
+  description?: string;
+  stock?: number;
   imagePath?: string;
   rarity?: number;
   baseAtk?: number;
@@ -23,12 +25,14 @@ export interface UpdateWeaponParams {
   discount?: number;
   subStat?: string;
   passiveName?: string;
-  description?: string;
+  passiveDesc?: string;
 }
 
 export interface CreateWeaponParams {
   title: string;
   type: string;
+  description?: string;
+  stock?: number;
   imagePath: string;
   rarity: number;
   baseAtk: number;
@@ -36,5 +40,5 @@ export interface CreateWeaponParams {
   discount?: number;
   subStat?: string;
   passiveName?: string;
-  description?: string;
+  passiveDesc?: string;
 }
