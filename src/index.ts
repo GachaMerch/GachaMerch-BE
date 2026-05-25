@@ -1,12 +1,12 @@
 import "dotenv/config";
 import express, { Request, Response } from "express";
 import path from "path";
-import weaponRoute from "@/routes/weapon.route";
-import authRoute from "@/routes/auth.route";
-import orderRoute from "@/routes/order.route";
-import inventoryRoute from "@/routes/inventory.route";
-import shopRoute from "@/routes/shop.route";
-import notificationRoute from "@/routes/notification.route";
+import weaponRoute from "@/modules/weapon/weapon.route";
+import authRoute from "@/modules/auth/auth.route";
+import orderRoute from "@/modules/order/order.route";
+import inventoryRoute from "@/modules/inventory/inventory.route";
+import shopRoute from "@/modules/shop/shop.route";
+import notificationRoute from "@/modules/notification/notification.route";
 import { requestLogger } from "@/middlewares/logger.middleware";
 
 const app = express();
