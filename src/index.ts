@@ -12,6 +12,7 @@ import { requestLogger } from "@/middlewares/logger.middleware";
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(requestLogger);
 app.use("/assets", express.static(path.join(process.cwd(), "assets")));
 const PORT = process.env.PORT || 3000;
@@ -20,7 +21,7 @@ const PORT = process.env.PORT || 3000;
 if (process.env.NODE_ENV !== "production") {
   import("swagger-ui-express").then((swaggerUi) => {
     import("@/config/swagger").then(({ swaggerSpec }) => {
-      app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+      app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
     });
   });
 }
